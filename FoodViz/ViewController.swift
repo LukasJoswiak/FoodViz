@@ -24,6 +24,10 @@ class ViewController: UIViewController, G8TesseractDelegate {
     
     var takePhoto: CGRect?
     
+    var foodImage = UIImage()
+    var rect: CGRect?
+    
+    
     //let tesseract: G8Tesseract = nil
     
     override func viewDidLoad() {
@@ -119,17 +123,14 @@ class ViewController: UIViewController, G8TesseractDelegate {
                 print("got image")
                 //let croppedImage = image.crop(rect: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height))
                 //self.stopCaptureSession()
-                let photoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
                 
-                photoVC.photoTaken = image
-                photoVC.rect = rect
+                self.foodImage = image
+                self.rect = rect
                 
-                DispatchQueue.main.async {
-                    self.present(photoVC, animated: true, completion: {
-                        self.stopCaptureSession()
-                    })
+//                DispatchQueue.main.async {
+                    self.performSegue(withIdentifier: "Food", sender: self)
                     
-                }
+//                }
             }
         }
         
@@ -149,6 +150,14 @@ class ViewController: UIViewController, G8TesseractDelegate {
             try imageRequestHandler.perform(self.requests)
         } catch {
             print(error)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let navVC = segue.destination as? UINavigationController else { return }
+        if let nextVC = navVC.viewControllers[0] as? PhotoViewController {
+            nextVC.photoTaken = self.foodImage
+            nextVC.rect = self.rect
         }
     }
     
@@ -273,8 +282,8 @@ class ViewController: UIViewController, G8TesseractDelegate {
         
         let xCoord = maxX * imageView.frame.size.width
         let yCoord = (1 - minY) * imageView.frame.size.height
-        let width = (minX - maxX) * imageView.frame.size.width
-        let height = (minY - maxY) * imageView.frame.size.height
+        let width = (minX - maxX) * imageView.frame.size.width + 5
+        let height = (minY - maxY) * imageView.frame.size.height + 5
         
         let outline = CALayer()
         let rect = CGRect(x: xCoord, y: yCoord, width: width, height: height)

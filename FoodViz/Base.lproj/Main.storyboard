@@ -20,9 +20,6 @@
                             <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GXy-CQ-iDI">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="490" id="Qyj-RI-QRe"/>
-                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="Bb8-nB-75I" appends="YES" id="UG1-9I-XdT"/>
                                 </connections>
@@ -40,6 +37,7 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="GXy-CQ-iDI" id="W2M-qg-aro"/>
+                        <segue destination="5yD-ep-5dE" kind="show" identifier="Food" id="6zV-R8-c1f"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -49,7 +47,7 @@
                     </connections>
                 </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="128.18590704647679"/>
+            <point key="canvasLocation" x="108" y="109"/>
         </scene>
         <!--Photo View Controller-->
         <scene sceneID="kdM-2d-C1r">
@@ -67,13 +65,32 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="vR2-b4-duZ"/>
                     </view>
+                    <navigationItem key="navigationItem" id="1zL-rU-Xs8"/>
                     <connections>
                         <outlet property="imageView" destination="5bf-q2-DyX" id="apq-Qc-rKv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uco-rd-XHP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="880.79999999999995" y="127.28635682158921"/>
+            <point key="canvasLocation" x="1543" y="128"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="YLn-cY-hWT">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5yD-ep-5dE" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="cUj-K1-cWC">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="IOU-B6-BPT" kind="relationship" relationship="rootViewController" id="o5P-Bp-50t"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KAK-XD-lPh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="880" y="126.83658170914543"/>
         </scene>
     </scenes>
 </document>
