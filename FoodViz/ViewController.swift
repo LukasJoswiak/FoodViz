@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 import Vision
-import URLSessions
+// import URLSessions
 import TesseractOCR
 
 class ViewController: UIViewController, G8TesseractDelegate {
@@ -182,6 +182,7 @@ class ViewController: UIViewController, G8TesseractDelegate {
         imageView.layer.addSublayer(outline)
     }
     
+    // MARK: Search API Calls
     
     func sendQuery() {
         let query = "CheeseBurger"
