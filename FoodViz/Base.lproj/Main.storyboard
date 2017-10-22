@@ -65,7 +65,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="vR2-b4-duZ"/>
                     </view>
-                    <navigationItem key="navigationItem" id="1zL-rU-Xs8"/>
+                    <navigationItem key="navigationItem" id="1zL-rU-Xs8">
+                        <barButtonItem key="leftBarButtonItem" title="Close" id="n8e-Wz-XqG">
+                            <connections>
+                                <action selector="closeButtonPressed:" destination="IOU-B6-BPT" id="LQO-nm-MNu"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="5bf-q2-DyX" id="apq-Qc-rKv"/>
                     </connections>

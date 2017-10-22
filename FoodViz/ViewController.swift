@@ -96,7 +96,7 @@ class ViewController: UIViewController, G8TesseractDelegate {
     }
 
     // MARK: Video Capture
-    
+    var isInitialized = false
     func startLiveVideo() {
         session.sessionPreset = AVCaptureSession.Preset.photo
         let captureDevice = AVCaptureDevice.default(for: AVMediaType.video)
@@ -105,6 +105,7 @@ class ViewController: UIViewController, G8TesseractDelegate {
         let deviceOutput = AVCaptureVideoDataOutput()
         deviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
         deviceOutput.setSampleBufferDelegate(self, queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.default))
+        
         session.addInput(deviceInput)
         session.addOutput(deviceOutput)
         
@@ -128,6 +129,7 @@ class ViewController: UIViewController, G8TesseractDelegate {
                 self.rect = rect
                 
 //                DispatchQueue.main.async {
+                    self.session.stopRunning()
                     self.performSegue(withIdentifier: "Food", sender: self)
                     
 //                }
@@ -330,6 +332,8 @@ class ViewController: UIViewController, G8TesseractDelegate {
 //
 //        print(src)
     }
+    
+    
 
 }
 

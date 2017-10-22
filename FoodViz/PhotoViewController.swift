@@ -16,6 +16,9 @@ class PhotoViewController: UIViewController, G8TesseractDelegate {
     var photoTaken: UIImage?
     var rect: CGRect?
     
+    @IBAction func closeButtonPressed(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,6 +42,7 @@ class PhotoViewController: UIViewController, G8TesseractDelegate {
                     tesseract.recognize()
                     
                     print("Recognized text: \(tesseract.recognizedText)")
+                    self.makeQuery(food: tesseract.recognizedText)
                 }
                 
                 print("got here")
@@ -62,6 +66,59 @@ class PhotoViewController: UIViewController, G8TesseractDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    func makeQuery(food: String) {
+        let foood = food.replacingOccurrences(of: " ", with: "%20").replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "|", with: "").replacingOccurrences(of: "-", with: "")
+        let temp = "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=" + foood
+        let url = URL(string: temp)
+        var request = URLRequest(url: url!)
+        request.setValue("d22ae2acfcb64236be526d07be0ca7d4", forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            do {
+                if let result = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any] {
+                    let values = result["value"] as? [[String:Any]]
+                    for index in 0...0 {
+                        let firstResult = values?[index]
+                        if let contentUrl = firstResult!["contentUrl"], let urlString = contentUrl as? String {
+                            print(contentUrl)
+                            let pic = URL(string : urlString)
+                            let session = URLSession(configuration: .default)
+                            let downloadPicTask = session.dataTask(with: pic!) { (data, response, error) in
+                                // The download has finished.
+                                if let e = error {
+                                    print("Error downloading cat picture: \(e)")
+                                } else {
+                                    // No errors found.
+                                    // It would be weird if we didn't have a response, so check for that too.
+                                    if let res = response as? HTTPURLResponse {
+                                        print("Downloaded cat picture with response code \(res.statusCode)")
+                                        if let imageData = data {
+                                            // Finally convert that Data into an image and do what you wish with it.
+                                            let image = UIImage(data: imageData)!
+                                            // Do something with your image.
+                                            print("Assigning image")
+                                            DispatchQueue.main.async {
+                                                self.imageView.image = image
+                                                print("Just assigned image")
+                                            }
+                                            
+                                        } else {
+                                            print("Couldn't get image: Image is nil")
+                                        }
+                                    } else {
+                                        print("Couldn't get response code for some reason")
+                                    }
+                                }
+                            }
+                            downloadPicTask.resume()
+                        }
+                    }
+                    
+                } else { print("serialziation error") }
+            } catch { print("network error") }
+        }
+        task.resume()
+    }
 
 }
 
@@ -146,5 +203,7 @@ extension UIImage {
         return normalizedImage
         
     }
+    
+    
     
 }
