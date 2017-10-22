@@ -27,7 +27,6 @@ class ViewController: UIViewController, G8TesseractDelegate {
         super.viewDidLoad()
         
         if let tesseract = G8Tesseract(language: "eng") {
-            print("GOT HERE")
             print(tesseract.absoluteDataPath)
             tesseract.delegate = self
             tesseract.image = UIImage(named: "testImage")?.g8_blackAndWhite()
@@ -54,22 +53,22 @@ class ViewController: UIViewController, G8TesseractDelegate {
     // MARK: Gesture Recognizer
 
     @IBAction func panGestureAction(_ sender: UIPanGestureRecognizer) {
-        print("pan action")
+        //print("pan action")
         let view = sender.view
         let locationInView = sender.location(in: view)
         if sender.state == .began || sender.state == .changed {
             // get distance moved
-            print (self.currentBoxes)
+            //print (self.currentBoxes)
             let currentX = locationInView.x
             let currentY = locationInView.y
             for highlightedWord in self.currentBoxes {
-
-                if highlightedWord.minX > currentX - 10 && highlightedWord.maxX < currentX + 10 && highlightedWord.minY > currentY - 10 && highlightedWord.maxY < currentY - 10 {
+                //print("highlighted word: \(highlightedWord)")
+                if highlightedWord.minX < currentX && highlightedWord.maxX > currentX && highlightedWord.minY < currentY && highlightedWord.maxY > currentY {
                     print("hightlighted word hit")
                 }
             }
-            print("translation.x: \(locationInView.x)")
-            print("translation.y: \(locationInView.y)")
+            //print("translation.x: \(locationInView.x)")
+            //print("translation.y: \(locationInView.y)")
             
         }
     }
@@ -180,19 +179,16 @@ class ViewController: UIViewController, G8TesseractDelegate {
             }
         }
         
-        let xCord = maxX * imageView.frame.size.width
-        let yCord = (1 - minY) * imageView.frame.size.height
+        let xCoord = maxX * imageView.frame.size.width
+        let yCoord = (1 - minY) * imageView.frame.size.height
         let width = (minX - maxX) * imageView.frame.size.width
         let height = (minY - maxY) * imageView.frame.size.height
         
         let outline = CALayer()
-        outline.frame = CGRect(x: xCord, y: yCord, width: width, height: height)
+        outline.frame = CGRect(x: xCoord, y: yCoord, width: width, height: height)
         // add it to currentBoxes
         self.currentBoxes.append(outline.frame)
-        
-        if x != outline.frame.minX || x + width != outline.frame.maxX || y != outline.frame.minY || y + height != outline.frame.maxY {
-            print("Something is wrong")
-        }
+
         outline.borderWidth = 2.0
         outline.borderColor = UIColor.red.cgColor
         
