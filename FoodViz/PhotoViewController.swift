@@ -13,12 +13,19 @@ class PhotoViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     
     var photoTaken: UIImage?
+    var rect: CGRect?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         if let availableImage = photoTaken {
             imageView.image = availableImage
+            
+            if let rectCoords = rect {
+                let croppedImage = availableImage.crop(rect: CGRect(x: rectCoords.minX, y: rectCoords.minY, width: rectCoords.width, height: rectCoords.height))
+                print("got here")
+            }
+            
         }
     }
 
@@ -38,4 +45,21 @@ class PhotoViewController: UIViewController {
     }
     */
 
+}
+
+
+extension UIImage {
+    func crop( rect: CGRect) -> UIImage {
+        var rect = rect
+        rect.origin.x*=self.scale
+        rect.origin.y*=self.scale
+        rect.size.width*=self.scale
+        rect.size.height*=self.scale
+        
+        let imageRef = self.cgImage!.cropping(to: rect)
+        let image = UIImage(cgImage: imageRef!, scale: self.scale, orientation: self.imageOrientation)
+        return image
+    }
+    
+    
 }
