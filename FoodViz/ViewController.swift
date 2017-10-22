@@ -18,22 +18,26 @@ class ViewController: UIViewController, G8TesseractDelegate {
     @IBOutlet weak var imageView: UIImageView!
     
     var session = AVCaptureSession()
+    var cameraOutput = AVCapturePhotoOutput()
     var requests = [VNRequest]()
     var currentBoxes = [CGRect]()
     
-    // var tesseract: G8Tesseract = nil
+    var takePhoto: CGRect?
+    
+    //let tesseract: G8Tesseract = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        /*
         if let tesseract = G8Tesseract(language: "eng") {
-            print(tesseract.absoluteDataPath)
             tesseract.delegate = self
             tesseract.image = UIImage(named: "testImage")?.g8_blackAndWhite()
             tesseract.recognize()
             
             print("Recognized text: \(tesseract.recognizedText)")
         }
+         */
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,9 +64,21 @@ class ViewController: UIViewController, G8TesseractDelegate {
             let currentX = locationInView.x
             let currentY = locationInView.y
             let currentPoint = CGPoint(x: currentX, y: currentY)
+            
             for highlightedWord in self.currentBoxes {
                 if highlightedWord.contains(currentPoint) {
-                    print("highlighted word hit")
+                    if let tesseract = G8Tesseract(language: "eng") {
+                        captureImage(highlightedWord)
+                        
+                        print("CAPTURED IMAGE")
+                        tesseract.delegate = self
+                        let image = UIImage(named: "testImage")?.g8_blackAndWhite()
+                        tesseract.image = image
+                        //tesseract.rect = highlightedWord
+                        tesseract.recognize()
+                        
+                        print("Recognized text: \(tesseract.recognizedText)")
+                    }
                 }
             }
             
@@ -96,6 +112,16 @@ class ViewController: UIViewController, G8TesseractDelegate {
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if let rect = takePhoto {
+            takePhoto = nil
+            
+            if let image = self.getImageFromSampleBuffer(buffer: sampleBuffer) {
+                print("got image")
+                let croppedImage = image.crop(rect: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height))
+                self.stopCaptureSession()
+            }
+        }
+        
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
@@ -113,6 +139,64 @@ class ViewController: UIViewController, G8TesseractDelegate {
         } catch {
             print(error)
         }
+    }
+    
+    func getImageFromSampleBuffer (buffer: CMSampleBuffer) -> UIImage? {
+        if let pixelBuffer = CMSampleBufferGetImageBuffer(buffer) {
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            let context = CIContext()
+            
+            let imageRect = CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
+            
+            if let image = context.createCGImage(ciImage, from: imageRect) {
+                let test = UIImage(cgImage: image)
+                return UIImage(cgImage: image, scale: UIScreen.main.scale, orientation: .right)
+            }
+            
+        }
+        
+        return nil
+    }
+    
+    func stopCaptureSession () {
+        self.session.stopRunning()
+        
+        if let inputs = session.inputs as? [AVCaptureDeviceInput] {
+            for input in inputs {
+                self.session.removeInput(input)
+            }
+        }
+        
+    }
+
+    /*
+    func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: NSError?) {
+        print("captured image")
+        if let error = error {
+            print("error: \(error)")
+        }
+        
+        /*
+        if let sampleBuffer = photoSampleBuffer, let previewBuffer = previewPhotoSampleBuffer, let dataImage = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+            print("image: \(UIImage(data: dataImage)?.size)") // Your Image
+        }
+         */
+    }
+     */
+    
+    func captureImage(_ rect: CGRect) {
+        takePhoto = rect
+        print("capturing image")
+        /*
+        //session.stopRunning()
+        let settings = AVCapturePhotoSettings()
+        let previewPixelType = settings.__availablePreviewPhotoPixelFormatTypes.first!
+        let previewFormat = [kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
+                             kCVPixelBufferWidthKey as String: 160,
+                             kCVPixelBufferHeightKey as String: 160]
+        settings.previewPhotoFormat = previewFormat
+        self.cameraOutput.capturePhoto(with: settings, delegate: self)
+         */
     }
     
     // MARK: Text Detection
@@ -181,17 +265,15 @@ class ViewController: UIViewController, G8TesseractDelegate {
         let height = (minY - maxY) * imageView.frame.size.height
         
         let outline = CALayer()
-        outline.frame = CGRect(x: xCoord, y: yCoord, width: width, height: height)
-        // add it to currentBoxes
-        self.currentBoxes.append(outline.frame)
-<<<<<<< HEAD
-=======
-
->>>>>>> 4f3bb9a31c058662163dea8b86993b0156bc7d6e
+        let rect = CGRect(x: xCoord, y: yCoord, width: width, height: height)
+        outline.frame = rect
         outline.borderWidth = 2.0
         outline.borderColor = UIColor.red.cgColor
         
         imageView.layer.addSublayer(outline)
+        
+        // add frame to currentBoxes
+        self.currentBoxes.append(rect)
     }
     
     func highlightLetters(box: VNRectangleObservation) {
@@ -228,9 +310,40 @@ class ViewController: UIViewController, G8TesseractDelegate {
 //        print(src)
     }
 
-
 }
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     
 }
+
+extension ViewController: AVCapturePhotoCaptureDelegate {
+    func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: NSError?) {
+        print("captured image")
+        if let error = error {
+            print("error: \(error)")
+        }
+        
+        /*
+         if let sampleBuffer = photoSampleBuffer, let previewBuffer = previewPhotoSampleBuffer, let dataImage = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+         print("image: \(UIImage(data: dataImage)?.size)") // Your Image
+         }
+         */
+    }
+}
+
+extension UIImage {
+    func crop( rect: CGRect) -> UIImage {
+        var rect = rect
+        rect.origin.x*=self.scale
+        rect.origin.y*=self.scale
+        rect.size.width*=self.scale
+        rect.size.height*=self.scale
+        
+        let imageRef = self.cgImage!.cropping(to: rect)
+        let image = UIImage(cgImage: imageRef!, scale: self.scale, orientation: self.imageOrientation)
+        return image
+    }
+    
+    
+}
+
