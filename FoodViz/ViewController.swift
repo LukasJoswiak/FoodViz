@@ -27,7 +27,6 @@ class ViewController: UIViewController, G8TesseractDelegate {
         super.viewDidLoad()
         
         if let tesseract = G8Tesseract(language: "eng") {
-            print("GOT HERE")
             print(tesseract.absoluteDataPath)
             tesseract.delegate = self
             tesseract.image = UIImage(named: "testImage")?.g8_blackAndWhite()
@@ -176,15 +175,19 @@ class ViewController: UIViewController, G8TesseractDelegate {
             }
         }
         
-        let xCord = maxX * imageView.frame.size.width
-        let yCord = (1 - minY) * imageView.frame.size.height
+        let xCoord = maxX * imageView.frame.size.width
+        let yCoord = (1 - minY) * imageView.frame.size.height
         let width = (minX - maxX) * imageView.frame.size.width
         let height = (minY - maxY) * imageView.frame.size.height
         
         let outline = CALayer()
-        outline.frame = CGRect(x: xCord, y: yCord, width: width, height: height)
+        outline.frame = CGRect(x: xCoord, y: yCoord, width: width, height: height)
         // add it to currentBoxes
         self.currentBoxes.append(outline.frame)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4f3bb9a31c058662163dea8b86993b0156bc7d6e
         outline.borderWidth = 2.0
         outline.borderColor = UIColor.red.cgColor
         
