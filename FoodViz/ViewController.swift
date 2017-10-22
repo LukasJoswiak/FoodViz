@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import Vision
+import URLSessions
 import TesseractOCR
 
 class ViewController: UIViewController, G8TesseractDelegate {
@@ -180,6 +181,26 @@ class ViewController: UIViewController, G8TesseractDelegate {
         
         imageView.layer.addSublayer(outline)
     }
+    
+    
+    func sendQuery() {
+        let query = "CheeseBurger"
+        
+        let temp = "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=" + query
+        
+        let url = URL(string: "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=CheeseBurger")
+        
+        let task = URLSession.shared.dataTask(with: url!) {(data, response, error) in
+            print(NSString(data: data!, encoding: String.Encoding.utf8))
+        }
+        
+        task.resume()
+        
+        let src = task.result.value.contentUrl
+        
+        print(src)
+    }
+
 
 }
 
