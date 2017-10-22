@@ -19,6 +19,7 @@ class ViewController: UIViewController, G8TesseractDelegate {
     
     var session = AVCaptureSession()
     var requests = [VNRequest]()
+    var currentBoxes = [CGRect]()
     
     // var tesseract: G8Tesseract = nil
     
@@ -48,6 +49,29 @@ class ViewController: UIViewController, G8TesseractDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: Gesture Recognizer
+
+    @IBAction func panGestureAction(_ sender: UIPanGestureRecognizer) {
+        print("pan action")
+        let view = sender.view
+        let locationInView = sender.location(in: view)
+        if sender.state == .began || sender.state == .changed {
+            // get distance moved
+            print (self.currentBoxes)
+            let currentX = locationInView.x
+            let currentY = locationInView.y
+            for highlightedWord in self.currentBoxes {
+
+                if highlightedWord.minX > currentX - 10 && highlightedWord.maxX < currentX + 10 && highlightedWord.minY > currentY - 10 && highlightedWord.maxY < currentY - 10 {
+                    print("hightlighted word hit")
+                }
+            }
+            print("translation.x: \(locationInView.x)")
+            print("translation.y: \(locationInView.y)")
+            
+        }
     }
     
     // MARK: Text Recognition
@@ -113,6 +137,8 @@ class ViewController: UIViewController, G8TesseractDelegate {
         let result = observations.map({$0 as? VNTextObservation })
         
         DispatchQueue.main.async() {
+            // empty out array of current boxes
+            self.currentBoxes.removeAll(keepingCapacity: true)
             self.imageView.layer.sublayers?.removeSubrange(1...)
             for region in result {
                 guard let rg = region else {
@@ -134,7 +160,6 @@ class ViewController: UIViewController, G8TesseractDelegate {
         guard let boxes = box.characterBoxes else {
             return
         }
-        
         var maxX: CGFloat = 9999.0
         var minX: CGFloat = 0.0
         var maxY: CGFloat = 9999.0
@@ -162,6 +187,12 @@ class ViewController: UIViewController, G8TesseractDelegate {
         
         let outline = CALayer()
         outline.frame = CGRect(x: xCord, y: yCord, width: width, height: height)
+        // add it to currentBoxes
+        self.currentBoxes.append(outline.frame)
+        
+        if x != outline.frame.minX || x + width != outline.frame.maxX || y != outline.frame.minY || y + height != outline.frame.maxY {
+            print("Something is wrong")
+        }
         outline.borderWidth = 2.0
         outline.borderColor = UIColor.red.cgColor
         
