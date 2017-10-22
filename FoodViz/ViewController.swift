@@ -11,7 +11,7 @@ import AVFoundation
 import Vision
 import TesseractOCR
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, G8TesseractDelegate {
     
     // MARK: Properties
     @IBOutlet weak var imageView: UIImageView!
@@ -19,9 +19,20 @@ class ViewController: UIViewController {
     var session = AVCaptureSession()
     var requests = [VNRequest]()
     
+    // var tesseract: G8Tesseract = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        if let tesseract = G8Tesseract(language: "eng") {
+            print("GOT HERE")
+            print(tesseract.absoluteDataPath)
+            tesseract.delegate = self
+            tesseract.image = UIImage(named: "testImage")?.g8_blackAndWhite()
+            tesseract.recognize()
+            
+            print("Recognized text: \(tesseract.recognizedText)")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -36,6 +47,12 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: Text Recognition
+    
+    func progressImageRecognition(for tesseract: G8Tesseract!) {
+        print("Recognition progress: \(tesseract.progress) %")
     }
 
     // MARK: Video Capture
