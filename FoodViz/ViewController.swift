@@ -117,8 +117,18 @@ class ViewController: UIViewController, G8TesseractDelegate {
             
             if let image = self.getImageFromSampleBuffer(buffer: sampleBuffer) {
                 print("got image")
-                let croppedImage = image.crop(rect: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height))
-                self.stopCaptureSession()
+                //let croppedImage = image.crop(rect: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height))
+                //self.stopCaptureSession()
+                let photoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PhotoViewController") as! PhotoViewController
+                
+                photoVC.photoTaken = image
+                
+                DispatchQueue.main.async {
+                    self.present(photoVC, animated: true, completion: {
+                        self.stopCaptureSession()
+                    })
+                    
+                }
             }
         }
         

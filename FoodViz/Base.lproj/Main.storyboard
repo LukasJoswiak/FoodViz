@@ -51,5 +51,29 @@
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="128.18590704647679"/>
         </scene>
+        <!--Photo View Controller-->
+        <scene sceneID="kdM-2d-C1r">
+            <objects>
+                <viewController storyboardIdentifier="PhotoViewController" id="IOU-B6-BPT" customClass="PhotoViewController" customModule="FoodViz" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="x5p-Bv-R9c">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5bf-q2-DyX">
+                                <rect key="frame" x="0.0" y="65" width="375" height="458"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="vR2-b4-duZ"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="5bf-q2-DyX" id="apq-Qc-rKv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uco-rd-XHP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="880.79999999999995" y="127.28635682158921"/>
+        </scene>
     </scenes>
 </document>
