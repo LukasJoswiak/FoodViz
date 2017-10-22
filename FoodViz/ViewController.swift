@@ -54,22 +54,18 @@ class ViewController: UIViewController, G8TesseractDelegate {
     // MARK: Gesture Recognizer
 
     @IBAction func panGestureAction(_ sender: UIPanGestureRecognizer) {
-        print("pan action")
         let view = sender.view
         let locationInView = sender.location(in: view)
         if sender.state == .began || sender.state == .changed {
             // get distance moved
-            print (self.currentBoxes)
             let currentX = locationInView.x
             let currentY = locationInView.y
+            let currentPoint = CGPoint(x: currentX, y: currentY)
             for highlightedWord in self.currentBoxes {
-
-                if highlightedWord.minX > currentX - 10 && highlightedWord.maxX < currentX + 10 && highlightedWord.minY > currentY - 10 && highlightedWord.maxY < currentY - 10 {
-                    print("hightlighted word hit")
+                if highlightedWord.contains(currentPoint) {
+                    print("highlighted word hit")
                 }
             }
-            print("translation.x: \(locationInView.x)")
-            print("translation.y: \(locationInView.y)")
             
         }
     }
@@ -189,10 +185,6 @@ class ViewController: UIViewController, G8TesseractDelegate {
         outline.frame = CGRect(x: xCord, y: yCord, width: width, height: height)
         // add it to currentBoxes
         self.currentBoxes.append(outline.frame)
-        
-        if x != outline.frame.minX || x + width != outline.frame.maxX || y != outline.frame.minY || y + height != outline.frame.maxY {
-            print("Something is wrong")
-        }
         outline.borderWidth = 2.0
         outline.borderColor = UIColor.red.cgColor
         
