@@ -184,10 +184,7 @@ class ViewController: UIViewController, G8TesseractDelegate {
         outline.frame = CGRect(x: xCoord, y: yCoord, width: width, height: height)
         // add it to currentBoxes
         self.currentBoxes.append(outline.frame)
-<<<<<<< HEAD
-=======
 
->>>>>>> 4f3bb9a31c058662163dea8b86993b0156bc7d6e
         outline.borderWidth = 2.0
         outline.borderColor = UIColor.red.cgColor
         
