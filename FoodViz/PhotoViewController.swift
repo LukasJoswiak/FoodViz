@@ -22,7 +22,10 @@ class PhotoViewController: UIViewController {
             imageView.image = availableImage
             
             if let rectCoords = rect {
+                let croppedImage2 = self.photoTaken?.cgImage
+                let croppedImage3 = croppedImage2?.cropping(to: CGRect(x: rectCoords.minX, y: rectCoords.minY, width: rectCoords.width, height: rectCoords.height))
                 let croppedImage = availableImage.crop(rect: CGRect(x: rectCoords.minX, y: rectCoords.minY, width: rectCoords.width, height: rectCoords.height))
+                self.imageView.image = croppedImage
                 print("got here")
             }
             

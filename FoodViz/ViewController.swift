@@ -154,9 +154,10 @@ class ViewController: UIViewController, G8TesseractDelegate {
     
     func getImageFromSampleBuffer (buffer: CMSampleBuffer) -> UIImage? {
         if let pixelBuffer = CMSampleBufferGetImageBuffer(buffer) {
-            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            var ciImage = CIImage(cvPixelBuffer: pixelBuffer)
             let context = CIContext()
-            
+            ciImage = ciImage.transformed(by: ciImage.orientationTransform(forExifOrientation: 6))
+            print("set image")
             let imageRect = CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
             
             if let image = context.createCGImage(ciImage, from: imageRect) {
