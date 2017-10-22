@@ -37,7 +37,7 @@ class PhotoViewController: UIViewController, G8TesseractDelegate {
                     tesseract.delegate = self
                     //tesseract.engineMode = .tesseractCubeCombined
                     tesseract.pageSegmentationMode = .singleLine
-                    tesseract.image = self.imageView.image!.g8_blackAndWhite()
+                    tesseract.image = self.imageView.image!
                     //tesseract.image = UIImage(named: "home")?.g8_blackAndWhite()
                     tesseract.recognize()
                     
