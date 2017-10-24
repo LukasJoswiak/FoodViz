@@ -172,7 +172,6 @@ class ViewController: UIViewController, G8TesseractDelegate {
             let imageRect = CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
             
             if let image = context.createCGImage(ciImage, from: imageRect) {
-                let test = UIImage(cgImage: image)
                 return UIImage(cgImage: image, scale: UIScreen.main.scale, orientation: .right)
             }
             
