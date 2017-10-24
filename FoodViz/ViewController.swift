@@ -156,11 +156,11 @@ class ViewController: UIViewController, G8TesseractDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let navVC = segue.destination as? UINavigationController else { return }
-        if let nextVC = navVC.viewControllers[0] as? PhotoViewController {
-            nextVC.photoTaken = self.foodImage
-            nextVC.rect = self.rect
-        }
+        guard let nextVC = segue.destination as? PhotoViewController else { return }
+        //if let nextVC = navVC.viewControllers[0] as? PhotoViewController {
+        nextVC.photoTaken = self.foodImage
+        nextVC.rect = self.rect
+        //}
     }
     
     func getImageFromSampleBuffer (buffer: CMSampleBuffer) -> UIImage? {
