@@ -38,6 +38,7 @@ class PhotoViewController: UIViewController, G8TesseractDelegate {
                     //tesseract.engineMode = .tesseractCubeCombined
                     tesseract.pageSegmentationMode = .singleLine
                     tesseract.image = self.imageView.image!
+                    tesseract.charWhitelist = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789!?"
                     //tesseract.image = UIImage(named: "home")?.g8_blackAndWhite()
                     tesseract.recognize()
                     
@@ -68,15 +69,24 @@ class PhotoViewController: UIViewController, G8TesseractDelegate {
     */
     
     func makeQuery(food: String) {
+        print("Query was: \(food)")
         let foood = food.replacingOccurrences(of: " ", with: "%20").replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "|", with: "").replacingOccurrences(of: "-", with: "")
         let temp = "https://api.cognitive.microsoft.com/bing/v7.0/images/search?q=" + foood
         let url = URL(string: temp)
+        if url == nil {
+            print("url could not be parsed")
+            return
+        }
         var request = URLRequest(url: url!)
         request.setValue("d22ae2acfcb64236be526d07be0ca7d4", forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             do {
                 if let result = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any] {
                     let values = result["value"] as? [[String:Any]]
+                    if values!.isEmpty {
+                        print("URL result array is empty")
+                        return
+                    }
                     for index in 0...0 {
                         let firstResult = values?[index]
                         if let contentUrl = firstResult!["contentUrl"], let urlString = contentUrl as? String {
